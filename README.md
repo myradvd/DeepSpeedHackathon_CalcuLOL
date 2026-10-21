@@ -1,4 +1,27 @@
-# RoboRacer Autonomous Racing — Track 1
+# DEEPSPEED AUTONOMOUS RACING SIMULATION HACKATHON 
+
+## TEAM CalcuLOL 
+**Position on Final Leaderboard: 1** 
+
+* **Members:** Myra Dwivedi (@myradvd), Anish Gangavaram (AMGhalcyon) and Davis Lee (davislee23).
+* **Algorithm:** MPC (Model Predictive Control) Profile with minimum curvature based on an offline pre-computed racing line (albeit regeneratable at runtime,it takes ~3-4 minutes for generation, hence, is shipped as a csv). Optimised speed-profile based on the simulator's real latency, steering and dynamics, and added an auto-breaking functionality within the MPC instead of following a fixed speed-profile to drop lap-time significantly. Implemented backward crawl and slow warmup safety procedures for collision prevent and recovery. 
+* **Implementation:** RViz Visualiser. Control through ROS2. Done through SLSQP (Sequential Least Squares Programming) and Python. Control loop: 25ms.
+* **Possible Failure Mode:** CPU overloading causing Real Time Factor(RTF) <= 1.5, causing information latency communication issues between MPC controller and simulation. Recommended to test on Intel Ultra Core 7 or better.
+
+  
+Results: <img width="2560" height="1115" alt="image" src="https://github.com/user-attachments/assets/85d17fa0-08ac-4ad3-a0b7-35615e472ca1" />
+
+Running and set-up instructions for windows, macOS and linux are in the original project brief (see below).
+SUBMISSION.md and HOW_IT_WORKS.md contain higher level and in depth (respectively) overviews of our approach, design considerations, failed attempts, alternate algorithm baseline results (Pure-Pursuit, Follow-the-gap, Pure Pursuit with pre-computed racing line) and implementation details.
+
+
+---
+
+<details>
+<summary>💡 <b>See the original brief</b></summary>
+<br>
+
+## RoboRacer Autonomous Racing — Track 1
 
 **NTU DeepSpeed Recruitment Hackathon 26/27**
 
@@ -11,7 +34,7 @@ track — is in this repository. You will not need to clone anything else.
 
 ---
 
-## Quick start
+### Quick start
 
 ```sh
 git clone --recurse-submodules https://github.com/NTUDeepSpeed/Recruitment_Hackathon_2627.git
@@ -56,7 +79,7 @@ Full walkthrough: **[docs/01-setup.md](docs/01-setup.md)**.
 
 ---
 
-## The challenge
+### The challenge
 
 You get a LiDAR scan and the car's exact position. You publish a steering angle
 and a speed. That is the whole interface.
@@ -84,84 +107,5 @@ approach needs and where each breaks.
 
 ---
 
-## Where things are
+### Where things are
 
-```
-Recruitment_Hackathon_2627/
-├── install/                    Setup scripts, one folder per platform
-│   ├── linux/  macos/  windows/    setup.sh, run.sh, shell.sh, stop.sh
-│   └── common.sh
-├── race_ws/src/                The ROS 2 workspace, mounted into the container
-│   ├── team_driver/            ★ YOUR CODE GOES HERE — the template does not drive
-│   └── roboracer_referee/        The judging environment — do not modify
-├── scripts/                    evaluate.sh, leaderboard.py, track_tool.py, …
-├── maps/                       The circuit: icra26.pgm, its yaml, tracks.yaml
-├── docker/                     Image definition (ROS 2 Jazzy) and compose files
-├── external/                   Upstream simulator sources, as git submodules
-├── results/                    Where your run results land
-├── .github/workflows/          Automated judging on every push
-├── docs/                       This guide
-└── workshop/                   ROS 2 teaching material from the workshop
-```
-
-The one file you are meant to open first:
-**[`race_ws/src/team_driver/team_driver/driver.py`](race_ws/src/team_driver/team_driver/driver.py)**
-
----
-
-## The guide
-
-| Chapter | What is in it |
-| --- | --- |
-| **[1. Setup](docs/01-setup.md)** | Installing Docker, building the image, first run, troubleshooting |
-| **[2. The simulator](docs/02-simulator.md)** | Topics, message types, changing tracks, RViz, ground-truth odometry |
-| **[3. ROS 2 primer](docs/03-workshop.md)** | Nodes, topics and the workshop slides, if ROS is new to you |
-| **[4. Algorithms](docs/04-algorithms.md)** | The menu: reactive, planned, model-based and learned — what each needs and where each breaks |
-| **[5. Evaluation](docs/05-evaluation.md)** | Scoring yourself, reading result files, how judging day runs |
-| **[6. Rules](docs/06-rules.md)** | The rules, the scoring formula, and what gets you disqualified |
-| **[7. Submission](docs/07-submission.md)** | What to hand in, how, and what the interview covers |
-
----
-
-## Rules at a glance
-
-The full rules are in **[docs/06-rules.md](docs/06-rules.md)** and they are what
-counts. The short version:
-
-- **Teams of 3 to 5.**
-- **Deadline: 18 October 2026, 23:59 SGT.** Late entries are not scored.
-- **AI assistants are allowed.** You will be asked to explain your code at the
-  interview — generally, not line by line — so do not submit anything you
-  cannot defend. A learned policy is held to the same standard, and meets it
-  the same way: explain how you trained it and why, not what each weight
-  means.
-- **Do not modify the judging environment.** Check yourself with
-  `./scripts/verify_judging_env.sh`.
-- **Score (out of 100):**
-
-  | | Weight | Formula |
-  | --- | --- | --- |
-  | Fastest single lap | 50 | `50 × (fastest lap of any team ÷ your fastest lap)` |
-  | 10-lap total | 50 | `50 × (fastest 10-lap total ÷ your 10-lap total)` |
-
-  One warm-up lap is granted before timing starts. Each collision adds 10 s to
-  the lap it happened on. More than 10 collisions in a run is a
-  disqualification.
-
-- **Bonus marks** at the interview, for work you can explain properly:
-  replacing the ground-truth odometry with your own localisation; generating a
-  racing line from the map at runtime; or an ambitious driving algorithm —
-  reinforcement learning, MPC, imitation learning.
-
----
-
-## Getting help
-
-- Check the troubleshooting section at the end of
-  [docs/01-setup.md](docs/01-setup.md) first — most problems are there.
-- Bring the exact error text and what you ran to the team channel.
-- `./scripts/verify_judging_env.sh` will tell you if your environment has
-  drifted from the official one.
-- You may email `ntu-deepspeed@e.ntu.edu.sg` for further inquiries if you cannot solve the issues after troubleshooting.
-
-Good luck. Go fast.
